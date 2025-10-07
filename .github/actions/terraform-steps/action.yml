@@ -1,0 +1,25 @@
+name: 'Terraform Composite Steps'
+description: 'Reusable composite action for Terraform commands'
+inputs:
+  terraform-directory:
+    required: true
+    description: 'Directory containing Terraform configuration'
+  github-ref:
+    required: true
+    description: 'GitHub ref for branch check'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Terraform Init
+      run: terraform -chdir=${{ inputs.terraform-directory }} init
+      shell: bash
+
+    - name: Terraform Plan
+      run: terraform -chdir=${{ inputs.terraform-directory }} plan
+      shell: bash
+
+    - name: Terraform Apply
+      if: ${{ inputs.github-ref == 'refs/heads/main' }}
+      run: terraform -chdir=${{ inputs.terraform-directory }} apply -auto-approve
+      shell: bash
