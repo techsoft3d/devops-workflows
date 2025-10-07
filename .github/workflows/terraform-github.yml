@@ -16,21 +16,21 @@ on:
         type: string
         default: 'terraform'
     secrets:
-      AWS_ACCESS_KEY_ID:
+      aws_access_key_id:
         required: true
-      AWS_SECRET_ACCESS_KEY:
+      aws_secret_access_key:
         required: true
-      GITHUB_TOKEN:
+      github_pat:
         required: true
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
     env:
-      TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN }}
+      TF_VAR_github_token: ${{ secrets.github_pat }}
       TF_VAR_github_owner: ${{ inputs.github-owner }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,7 +41,10 @@ jobs:
           terraform_version: ${{ inputs.terraform-version }}
 
       - name: Terraform Steps
-        uses: ./.github/actions/terraform-steps
+        uses: techsoft3d/devops-workflows/.github/actions/terraform-steps@main
+        with:
+          terraform-directory: ${{ inputs.terraform-directory }}
+          github-ref: ${{ github.ref }}
         env:
           TERRAFORM_DIRECTORY: ${{ inputs.terraform-directory }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
