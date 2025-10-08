@@ -7,19 +7,23 @@ inputs:
   github-ref:
     required: true
     description: 'GitHub ref for branch check'
+  terraform-verbosity:
+    required: false
+    description: 'Log level passed to TF_LOG'
+    default: 'INFO'
 
 runs:
   using: 'composite'
   steps:
     - name: Terraform Init
-      run: terraform -chdir=${{ inputs.terraform-directory }} init
+      run: TF_LOG=${{ inputs.terraform-verbosity }} terraform -chdir=${{ inputs.terraform-directory }} init
       shell: bash
 
     - name: Terraform Plan
-      run: terraform -chdir=${{ inputs.terraform-directory }} plan
+      run: TF_LOG=${{ inputs.terraform-verbosity }} terraform -chdir=${{ inputs.terraform-directory }} plan
       shell: bash
 
     - name: Terraform Apply
       if: ${{ inputs.github-ref == 'refs/heads/main' }}
-      run: terraform -chdir=${{ inputs.terraform-directory }} apply -auto-approve
+      run: TF_LOG=${{ inputs.terraform-verbosity }} terraform -chdir=${{ inputs.terraform-directory }} apply -auto-approve
       shell: bash
