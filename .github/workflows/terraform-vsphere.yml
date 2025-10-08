@@ -1,4 +1,4 @@
-name: Terraform GitHub Reusable Workflow
+name: Terraform vSphere Reusable Workflow
 
 on:
   workflow_call:
@@ -15,20 +15,37 @@ on:
         required: false
         type: string
         default: 'terraform'
+      terraform-verbosity:
+        required: false
+        type: string
     secrets:
       aws_access_key_id:
         required: true
       aws_secret_access_key:
         required: true
-      github_pat:
+      vsphere_username:
         required: true
+      vsphere_password:
+        required: true
+      sa_username:
+        required: false
+      sa_password:
+        required: false
+      aa_username:
+        required: false
+      aa_password:
+        required: false
 
 jobs:
   terraform:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64]
     env:
-      TF_VAR_github_token: ${{ secrets.github_pat }}
-      TF_VAR_github_owner: ${{ inputs.github-owner }}
+      TF_VAR_vsphere_username: ${{ secrets.github_pat }}
+      TF_VAR_vsphere_password: ${{ inputs.github-owner }}
+      TF_VAR_sa_username: ${{ secrets.sa_username }}
+      TF_VAR_sa_password: ${{ secrets.sa_password }}
+      TF_VAR_aa_username: ${{ secrets.aa_username }}
+      TF_VAR_aa_password: ${{ secrets.aa_password }}
       AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
     steps:
